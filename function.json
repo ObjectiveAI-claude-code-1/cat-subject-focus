@@ -1,0 +1,184 @@
+{
+  "type": "scalar.function",
+  "input_schema": {
+    "type": "object",
+    "description": "A photograph containing a cat to evaluate for subject focus quality.",
+    "properties": {
+      "photograph": {
+        "type": "image",
+        "description": "A photograph containing a cat. The image may come from any source — a professional camera, a smartphone, a surveillance camera, or any other device. The cat may be centered or off to one side, partially obscured or fully visible, still or in motion. The scene may be simple or cluttered, indoors or outdoors, well-lit or dim. The function will evaluate how well the photographic focus distinguishes the cat as the subject of the image."
+      }
+    },
+    "required": [
+      "photograph"
+    ]
+  },
+  "tasks": [
+    {
+      "type": "vector.completion",
+      "skip": null,
+      "messages": [
+        {
+          "role": "system",
+          "content": [
+            {
+              "type": "text",
+              "text": "You are a photography expert specializing in focus and depth of field analysis. You evaluate how photographic focus creates visual hierarchy between a subject and its surroundings."
+            }
+          ]
+        },
+        {
+          "role": "user",
+          "content": [
+            {
+              "$jmespath": "input.photograph"
+            },
+            {
+              "type": "text",
+              "text": "In this photograph of a cat, how does the sharpness of the cat compare to the sharpness of its surroundings? Is there a clear focal separation that prioritizes the cat over the rest of the scene?"
+            }
+          ]
+        }
+      ],
+      "responses": [
+        [
+          {
+            "type": "text",
+            "text": "The cat is strikingly sharp against beautifully softened surroundings. There is excellent focal separation — the depth of field clearly isolates the cat, and the eye is drawn to it immediately with no competition from the background or foreground."
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "text": "The cat is noticeably sharper than most of its surroundings. There is good focal separation — while not dramatic, the difference in sharpness meaningfully draws the eye toward the cat over the rest of the scene."
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "text": "The cat and its surroundings are at roughly similar levels of sharpness. There is little meaningful focal separation — focus does not clearly prioritize the cat over other elements in the frame."
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "text": "The cat is somewhat softer than parts of its surroundings. The focal separation works against the subject — some background or foreground elements appear sharper than the cat itself."
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "text": "The cat is clearly out of focus or blurred while the surroundings are sharper. Focus has missed the subject entirely — the cat is the least defined element in the scene."
+          }
+        ]
+      ],
+      "output": {
+        "$starlark": "output[\"scores\"][0] * 1.0 + output[\"scores\"][1] * 0.75 + output[\"scores\"][2] * 0.5 + output[\"scores\"][3] * 0.25 + output[\"scores\"][4] * 0.0"
+      }
+    },
+    {
+      "type": "vector.completion",
+      "skip": null,
+      "messages": [
+        {
+          "role": "user",
+          "content": [
+            {
+              "$jmespath": "input.photograph"
+            },
+            {
+              "type": "text",
+              "text": "Look closely at the cat in this photograph. Can you clearly make out its individual features — its eyes, the texture of its fur, the edges of its ears, and the contour of its body?"
+            }
+          ]
+        }
+      ],
+      "responses": [
+        [
+          {
+            "type": "text",
+            "text": "The cat's features are beautifully defined. The eyes are sharp and expressive with visible detail, the fur shows clear texture and pattern, the ears have crisp edges, and the body contour is well-delineated. This is a fully resolved portrait of a cat."
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "text": "The cat's features are mostly well-defined. Key details like the eyes and general fur pattern are clearly visible, though some finer details like individual whiskers or subtle fur texture may be slightly soft. The cat is clearly recognizable and its features are appreciable."
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "text": "The cat's features are partially defined. Some details are visible but others are lost to softness, motion, or distance. The cat is recognizable as a cat but its individual features are not all clearly rendered."
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "text": "The cat's features are poorly defined. It is difficult to make out specific details — the cat appears more as a general shape or silhouette than a detailed subject. Motion blur, distance, or poor focus has obscured most distinguishing features."
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "text": "The cat's features are essentially indistinguishable. The cat is so blurred, motion-smeared, or distant that it reads as little more than a vague, cat-shaped form. No individual features can be clearly perceived."
+          }
+        ]
+      ],
+      "output": {
+        "$starlark": "output[\"scores\"][0] * 1.0 + output[\"scores\"][1] * 0.75 + output[\"scores\"][2] * 0.5 + output[\"scores\"][3] * 0.25 + output[\"scores\"][4] * 0.0"
+      }
+    },
+    {
+      "type": "vector.completion",
+      "skip": null,
+      "messages": [
+        {
+          "role": "system",
+          "content": [
+            {
+              "type": "text",
+              "text": "You describe what photographs are pictures of, based on what the focus of the image draws your eye to first and foremost."
+            }
+          ]
+        },
+        {
+          "role": "user",
+          "content": [
+            {
+              "$jmespath": "input.photograph"
+            },
+            {
+              "type": "text",
+              "text": "What is this a photograph of? Does the cat command the scene as the undeniable subject, or is it just one element among many?"
+            }
+          ]
+        }
+      ],
+      "responses": [
+        [
+          {
+            "type": "text",
+            "text": "This is a photograph of a cat. The cat completely commands the scene — it is the undeniable subject of the image. The focus and visual emphasis make the cat the sole point of attention, and a viewer would immediately understand this is a picture of a cat."
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "text": "This is a photograph that features a cat, but the cat shares the scene with other elements that compete for attention. The cat is present and recognizable as a subject, but it does not fully dominate — other objects, animals, or details in the frame pull the eye away to some degree."
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "text": "This is a photograph of a scene that happens to contain a cat. The cat does not command the image — it is one element among many, and a viewer might not immediately identify the cat as the intended subject. The photograph reads more as a picture of the environment than as a picture of the cat."
+          }
+        ]
+      ],
+      "output": {
+        "$starlark": "output[\"scores\"][0] * 1.0 + output[\"scores\"][1] * 0.5 + output[\"scores\"][2] * 0.0"
+      }
+    }
+  ],
+  "description": "Evaluates how well photographic focus serves a cat as the subject of an image. Scores the photograph from 0 to 1 by assessing focal separation between the cat and its surroundings, the internal clarity of the cat's physical features, and whether focus grants the cat visual command over the entire scene."
+}
